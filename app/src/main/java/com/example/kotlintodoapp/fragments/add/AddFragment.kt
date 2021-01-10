@@ -11,12 +11,15 @@ import com.example.kotlintodoapp.R
 import com.example.kotlintodoapp.data.models.Priority
 import com.example.kotlintodoapp.data.models.ToDoData
 import com.example.kotlintodoapp.data.viewmodel.ToDoViewModel
+import com.example.kotlintodoapp.fragments.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_add.*
+import kotlinx.android.synthetic.main.fragment_add.view.*
 
 
 class AddFragment : Fragment() {
 
     private val mTodoViewModel: ToDoViewModel by viewModels()
+    private val mSharedViewModel: SharedViewModel by viewModels();
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +30,8 @@ class AddFragment : Fragment() {
 
         //set menu
         setHasOptionsMenu(true)
+
+        view.priorities_spinner.onItemSelectedListener = mSharedViewModel.listener
 
         return view
     }
@@ -47,13 +52,13 @@ class AddFragment : Fragment() {
         val mPriority = priorities_spinner.selectedItem.toString()
         val mDescription = description_editText.text.toString()
 
-        val validation = verifyDataFromUser(mTitle, mDescription)
+        val validation = mSharedViewModel.verifyDataFromUser(mTitle, mDescription)
         if (validation) {
             // insert data to DB
             val newData = ToDoData(
                 0,
                 mTitle,
-                parsePriority(mPriority),
+                mSharedViewModel.parsePriority(mPriority),
                 mDescription
             )
             mTodoViewModel.insertData(newData)
@@ -67,24 +72,4 @@ class AddFragment : Fragment() {
 
     }
 
-    private fun verifyDataFromUser(title: String, description: String): Boolean {
-        return if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
-            false
-        } else !(TextUtils.isEmpty(title) || TextUtils.isEmpty(description))
-    }
-
-    private fun parsePriority(priority: String): Priority {
-        return when (priority) {
-            "High Priority" -> {
-                Priority.HIGH
-            }
-            "Medium Priority" -> {
-                Priority.MEDIUM
-            }
-            "Low Priority" -> {
-                Priority.LOW
-            }
-            else -> Priority.LOW
-        }
-    }
 }
