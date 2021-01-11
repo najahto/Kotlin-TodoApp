@@ -23,9 +23,11 @@
 
             </menu>
         </item>
-        <item
-            android:id="@+id/menu_delete_all"
-            android:title="@string/delete_all"
-            app:showAsAction="never" />
     </group>
+
+    <item
+        android:id="@+id/menu_delete_all"
+        android:title="@string/delete_all"
+        app:showAsAction="never" />
+
 </menu>
